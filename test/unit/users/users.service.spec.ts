@@ -11,7 +11,7 @@ jest.mock('bcrypt');
 
 describe('UsersService', () => {
   let service: UsersService;
-  let repository: Repository<User>;
+  let _repository: Repository<User>;
 
   const mockRepository = {
     create: jest.fn(),
@@ -33,7 +33,7 @@ describe('UsersService', () => {
     }).compile();
 
     service = module.get<UsersService>(UsersService);
-    repository = module.get<Repository<User>>(getRepositoryToken(User));
+    _repository = module.get<Repository<User>>(getRepositoryToken(User));
   });
 
   afterEach(() => {
