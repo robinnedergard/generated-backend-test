@@ -8,9 +8,12 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
+import { ProductsModule } from './products/products.module';
 import { UserGraphQLModule } from './graphql/user/user.module';
+import { ProductGraphQLModule } from './graphql/product/product.module';
 import databaseConfig from './config/database.config';
 import { User } from './users/entities/user.entity';
+import { Product } from './products/entities/product.entity';
 
 @Module({
   imports: [
@@ -27,7 +30,7 @@ import { User } from './users/entities/user.entity';
         username: configService.get<string>('database.username'),
         password: configService.get<string>('database.password'),
         database: configService.get<string>('database.database'),
-        entities: [User],
+        entities: [User, Product],
         synchronize: process.env.NODE_ENV === 'development',
         logging: process.env.NODE_ENV === 'development',
       }),
@@ -45,7 +48,9 @@ import { User } from './users/entities/user.entity';
     }),
     UsersModule,
     AuthModule,
+    ProductsModule,
     UserGraphQLModule,
+    ProductGraphQLModule,
   ],
   controllers: [AppController],
   providers: [AppService],
