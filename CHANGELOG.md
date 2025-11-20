@@ -1,5 +1,9 @@
 # Changelog
 
+## <small>1.0.1 (2025-11-20)</small>
+
+* fix: apollo import ([4cbd0e3](https://github.com/robinnedergard/generated-backend-test/commit/4cbd0e3))
+
 ## 1.0.0 (2025-11-20)
 
 * fix: added ci and commit linting and versioning ([ce9d4a3](https://github.com/robinnedergard/generated-backend-test/commit/ce9d4a3))
