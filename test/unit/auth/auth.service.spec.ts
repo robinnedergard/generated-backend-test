@@ -75,7 +75,10 @@ describe('AuthService', () => {
       const result = await service.login(loginDto);
 
       expect(usersService.findByEmail).toHaveBeenCalledWith('test@example.com');
-      expect(bcrypt.compare).toHaveBeenCalledWith('password123', 'hashedPassword');
+      expect(bcrypt.compare).toHaveBeenCalledWith(
+        'password123',
+        'hashedPassword',
+      );
       expect(result.user).not.toHaveProperty('password');
       expect(result.user).toHaveProperty('id', '1');
       expect(result.user).toHaveProperty('email', 'test@example.com');
@@ -89,7 +92,9 @@ describe('AuthService', () => {
 
       mockUsersService.findByEmail.mockResolvedValue(null);
 
-      await expect(service.login(loginDto)).rejects.toThrow(UnauthorizedException);
+      await expect(service.login(loginDto)).rejects.toThrow(
+        UnauthorizedException,
+      );
     });
 
     it('should return null if password is incorrect (via login)', async () => {
@@ -111,7 +116,9 @@ describe('AuthService', () => {
       mockUsersService.findByEmail.mockResolvedValue(user);
       (bcrypt.compare as jest.Mock).mockResolvedValue(false);
 
-      await expect(service.login(loginDto)).rejects.toThrow(UnauthorizedException);
+      await expect(service.login(loginDto)).rejects.toThrow(
+        UnauthorizedException,
+      );
     });
   });
 
@@ -153,7 +160,9 @@ describe('AuthService', () => {
     it('should throw UnauthorizedException on invalid credentials', async () => {
       mockUsersService.findByEmail.mockResolvedValue(null);
 
-      await expect(service.login(loginDto)).rejects.toThrow(UnauthorizedException);
+      await expect(service.login(loginDto)).rejects.toThrow(
+        UnauthorizedException,
+      );
     });
   });
 
@@ -192,4 +201,3 @@ describe('AuthService', () => {
     });
   });
 });
-

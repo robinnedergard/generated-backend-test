@@ -11,7 +11,7 @@ jest.mock('bcrypt');
 
 describe('UsersService', () => {
   let service: UsersService;
-  let repository: Repository<User>;
+  let _repository: Repository<User>;
 
   const mockRepository = {
     create: jest.fn(),
@@ -33,7 +33,7 @@ describe('UsersService', () => {
     }).compile();
 
     service = module.get<UsersService>(UsersService);
-    repository = module.get<Repository<User>>(getRepositoryToken(User));
+    _repository = module.get<Repository<User>>(getRepositoryToken(User));
   });
 
   afterEach(() => {
@@ -138,7 +138,9 @@ describe('UsersService', () => {
 
       const result = await service.findOne('1');
 
-      expect(mockRepository.findOne).toHaveBeenCalledWith({ where: { id: '1' } });
+      expect(mockRepository.findOne).toHaveBeenCalledWith({
+        where: { id: '1' },
+      });
       expect(result).toEqual(user);
     });
   });
@@ -192,7 +194,9 @@ describe('UsersService', () => {
 
       const result = await service.update('1', updateDto);
 
-      expect(mockRepository.findOne).toHaveBeenCalledWith({ where: { id: '1' } });
+      expect(mockRepository.findOne).toHaveBeenCalledWith({
+        where: { id: '1' },
+      });
       expect(mockRepository.save).toHaveBeenCalled();
       expect(result.firstName).toBe('Jane');
     });
@@ -237,4 +241,3 @@ describe('UsersService', () => {
     });
   });
 });
-
