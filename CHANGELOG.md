@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.1.0 (2025-11-20)
+
+* feat: add product database (#3) ([380e83d](https://github.com/robinnedergard/generated-backend-test/commit/380e83d)), closes [#3](https://github.com/robinnedergard/generated-backend-test/issues/3)
+
 ## <small>1.0.1 (2025-11-20)</small>
 
 * fix: apollo import ([4cbd0e3](https://github.com/robinnedergard/generated-backend-test/commit/4cbd0e3))
