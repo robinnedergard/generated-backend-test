@@ -41,7 +41,7 @@
     "@nestjs/passport": "^11.0.5",
     "@nestjs/platform-express": "^11.1.9",
     "@nestjs/typeorm": "^11.0.0",
-    "apollo-server-express": "^3.13.0",
+    "@apollo/server": "^5.1.0",
     "bcrypt": "^6.0.0",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.2",
@@ -120,6 +120,11 @@
     "moduleNameMapper": {
       "^#src/(.*)$": "<rootDir>/src/$1",
       "^#test/(.*)$": "<rootDir>/test/$1"
+    }
+  },
+  "overrides": {
+    "@apollo/server-plugin-landing-page-graphql-playground": {
+      "@apollo/server": "$@apollo/server"
     }
   }
 }
