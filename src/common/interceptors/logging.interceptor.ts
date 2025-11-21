@@ -13,7 +13,17 @@ export class LoggingInterceptor implements NestInterceptor {
   private readonly logger = new Logger(LoggingInterceptor.name);
 
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
+    // Only log HTTP requests, skip GraphQL and other contexts
+    const contextType = context.getType();
+    if (contextType !== 'http') {
+      return next.handle();
+    }
+
     const request = context.switchToHttp().getRequest();
+    if (!request) {
+      return next.handle();
+    }
+
     const { method, url } = request;
     const now = Date.now();
 
@@ -21,9 +31,11 @@ export class LoggingInterceptor implements NestInterceptor {
       tap({
         next: () => {
           const response = context.switchToHttp().getResponse();
-          const { statusCode } = response;
-          const delay = Date.now() - now;
-          this.logger.log(`${method} ${url} ${statusCode} - ${delay}ms`);
+          if (response) {
+            const { statusCode } = response;
+            const delay = Date.now() - now;
+            this.logger.log(`${method} ${url} ${statusCode} - ${delay}ms`);
+          }
         },
         error: (error) => {
           const delay = Date.now() - now;

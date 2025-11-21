@@ -35,7 +35,7 @@ export class Product {
   @Column('decimal', { precision: 3, scale: 2, default: 0 })
   rating: number;
 
-  @Column('simple-array', { default: '' })
+  @Column('json', { default: '[]' })
   colors: string[];
 
   @CreateDateColumn()
