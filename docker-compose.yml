@@ -40,10 +40,11 @@ services:
     volumes:
       - .:/usr/src/app
       - /usr/src/app/node_modules
+      - /usr/src/app/dist
     depends_on:
       postgres:
         condition: service_healthy
-    command: npm run start:dev
+    command: sh /usr/src/app/scripts/start.sh
 
 volumes:
   postgres_data:

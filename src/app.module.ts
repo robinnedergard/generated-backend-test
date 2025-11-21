@@ -31,7 +31,7 @@ import { Product } from './products/entities/product.entity';
         password: configService.get<string>('database.password'),
         database: configService.get<string>('database.database'),
         entities: [User, Product],
-        synchronize: process.env.NODE_ENV === 'development',
+        synchronize: false, // Always use migrations, never synchronize
         logging: process.env.NODE_ENV === 'development',
       }),
       inject: [ConfigService],
@@ -44,6 +44,7 @@ import { Product } from './products/entities/product.entity';
         sortSchema: true,
         playground: process.env.GRAPHQL_PLAYGROUND === 'true',
         context: ({ req }) => ({ req }),
+        csrfPrevention: true,
       }),
     }),
     UsersModule,
