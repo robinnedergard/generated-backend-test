@@ -26,6 +26,7 @@
     "migration:generate": "typeorm-ts-node-commonjs migration:generate -d src/config/typeorm.config.ts",
     "migration:run": "typeorm-ts-node-commonjs migration:run -d src/config/typeorm.config.ts",
     "migration:revert": "typeorm-ts-node-commonjs migration:revert -d src/config/typeorm.config.ts",
+    "migration:show": "typeorm-ts-node-commonjs migration:show -d src/config/typeorm.config.ts",
     "prepare": "husky",
     "commitlint": "commitlint --edit",
     "semantic-release": "semantic-release"
@@ -42,6 +43,7 @@
     "@nestjs/platform-express": "^11.1.9",
     "@nestjs/typeorm": "^11.0.0",
     "@apollo/server": "^5.1.0",
+    "@as-integrations/express5": "^1.0.0",
     "bcrypt": "^6.0.0",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.2",
