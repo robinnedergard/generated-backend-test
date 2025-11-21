@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.2.0 (2025-11-21)
+
+* feat: added db, and migrations and made graphql work (#4) ([dc61845](https://github.com/robinnedergard/generated-backend-test/commit/dc61845)), closes [#4](https://github.com/robinnedergard/generated-backend-test/issues/4)
+
 ## 1.1.0 (2025-11-20)
 
 * feat: add product database (#3) ([380e83d](https://github.com/robinnedergard/generated-backend-test/commit/380e83d)), closes [#3](https://github.com/robinnedergard/generated-backend-test/issues/3)
