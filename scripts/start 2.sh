@@ -51,10 +51,5 @@ fi
 
 # Start the application
 echo "Starting application..."
-
-# Ensure dist directory exists and is clean for watch mode
-# Don't delete, just ensure it exists - NestJS watch mode will handle incremental builds
-mkdir -p dist
-
 exec npm run start:dev
 
