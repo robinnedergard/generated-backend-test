@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.4.0 (2025-11-22)
+
+* feat: login (#7) ([f1277ea](https://github.com/robinnedergard/generated-backend-test/commit/f1277ea)), closes [#7](https://github.com/robinnedergard/generated-backend-test/issues/7)
+
 ## <small>1.3.1 (2025-11-22)</small>
 
 * fix: no login required to see basic checkout success (#6) ([b6d77f7](https://github.com/robinnedergard/generated-backend-test/commit/b6d77f7)), closes [#6](https://github.com/robinnedergard/generated-backend-test/issues/6)
