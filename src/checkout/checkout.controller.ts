@@ -8,20 +8,24 @@ import {
   UseGuards,
   HttpCode,
   HttpStatus,
+  Request,
 } from '@nestjs/common';
 import { CheckoutService } from './checkout.service';
 import { CreateCheckoutDto } from './dto/create-checkout.dto';
 import { CheckoutStatus } from './entities/checkout.entity';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { OptionalJwtAuthGuard } from '../auth/guards/optional-jwt-auth.guard';
 
 @Controller('checkout')
 export class CheckoutController {
   constructor(private readonly checkoutService: CheckoutService) {}
 
   @Post()
+  @UseGuards(OptionalJwtAuthGuard)
   @HttpCode(HttpStatus.CREATED)
-  create(@Body() createCheckoutDto: CreateCheckoutDto) {
-    return this.checkoutService.create(createCheckoutDto);
+  create(@Body() createCheckoutDto: CreateCheckoutDto, @Request() req: any) {
+    const userId = req.user?.userId || undefined;
+    return this.checkoutService.create(createCheckoutDto, userId);
   }
 
   @Get()

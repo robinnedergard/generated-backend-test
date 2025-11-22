@@ -154,6 +154,7 @@ type Query {
   checkout(id: ID!): Checkout!
   checkouts(status: CheckoutStatus): [Checkout!]!
   featuredProducts: [Product!]!
+  myOrders: [Checkout!]!
   product(id: ID!): Product!
   products(category: String): [Product!]!
   user(id: ID!): User!

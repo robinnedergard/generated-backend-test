@@ -1,11 +1,17 @@
 import { Injectable, ExecutionContext } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
+import { GqlExecutionContext } from '@nestjs/graphql';
 import { Observable } from 'rxjs';
 import { of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
 @Injectable()
 export class OptionalJwtAuthGuard extends AuthGuard('jwt') {
+  getRequest(context: ExecutionContext) {
+    const ctx = GqlExecutionContext.create(context);
+    return ctx.getContext().req;
+  }
+
   // Override canActivate to not throw error when token is missing
   canActivate(
     context: ExecutionContext,
