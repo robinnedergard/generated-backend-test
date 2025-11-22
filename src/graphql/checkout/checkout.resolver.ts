@@ -1,10 +1,22 @@
-import { Resolver, Query, Mutation, Args, ID } from '@nestjs/graphql';
+import {
+  Resolver,
+  Query,
+  Mutation,
+  Args,
+  ID,
+  Context,
+  ResolveField,
+  Root,
+} from '@nestjs/graphql';
 import { UseGuards } from '@nestjs/common';
 import { Checkout, CheckoutStatus } from './checkout.type';
 import { CheckoutService } from '../../checkout/checkout.service';
 import { CreateCheckoutInput } from './create-checkout.input';
 import { CheckoutStatus as EntityCheckoutStatus } from '../../checkout/entities/checkout.entity';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
+import { OptionalJwtAuthGuard } from '../../auth/guards/optional-jwt-auth.guard';
+import { Address } from './checkout.type';
+import { PaymentDetails } from './checkout.type';
 
 @Resolver(() => Checkout)
 export class CheckoutResolver {
@@ -30,7 +42,7 @@ export class CheckoutResolver {
   }
 
   @Query(() => Checkout, { name: 'checkout' })
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(OptionalJwtAuthGuard)
   findOne(@Args('id', { type: () => ID }) id: string) {
     return this.checkoutService.findOne(id);
   }
@@ -39,5 +51,93 @@ export class CheckoutResolver {
   @UseGuards(JwtAuthGuard)
   cancelCheckout(@Args('id', { type: () => ID }) id: string) {
     return this.checkoutService.cancel(id);
+  }
+
+  // Field resolvers to conditionally return sensitive data based on authentication
+  @ResolveField(() => Address, { nullable: true })
+  shippingAddress(
+    @Root() checkout: Checkout,
+    @Context() context: any,
+  ): Address | null {
+    // Only return full address if authenticated
+    if (context.req?.user) {
+      return checkout.shippingAddress;
+    }
+    // Return minimal address info for unauthenticated users (city and country only)
+    if (checkout.shippingAddress) {
+      return {
+        firstName: '',
+        lastName: '',
+        address: '',
+        city: checkout.shippingAddress.city || '',
+        state: '',
+        zipCode: '',
+        country: checkout.shippingAddress.country || '',
+      };
+    }
+    return null;
+  }
+
+  @ResolveField(() => Address, { nullable: true })
+  billingAddress(
+    @Root() checkout: Checkout,
+    @Context() context: any,
+  ): Address | null {
+    // Only return billing address if authenticated
+    if (context.req?.user) {
+      return checkout.billingAddress || null;
+    }
+    return null;
+  }
+
+  @ResolveField(() => PaymentDetails, { nullable: true })
+  paymentDetails(
+    @Root() checkout: Checkout,
+    @Context() context: any,
+  ): PaymentDetails | null {
+    // Only return payment details if authenticated
+    if (context.req?.user) {
+      return checkout.paymentDetails || null;
+    }
+    return null;
+  }
+
+  @ResolveField(() => String, { nullable: true })
+  email(@Root() checkout: Checkout, @Context() context: any): string | null {
+    // Only return email if authenticated
+    if (context.req?.user) {
+      return checkout.email || null;
+    }
+    return null;
+  }
+
+  @ResolveField(() => String, { nullable: true })
+  phone(@Root() checkout: Checkout, @Context() context: any): string | null {
+    // Only return phone if authenticated
+    if (context.req?.user) {
+      return checkout.phone || null;
+    }
+    return null;
+  }
+
+  @ResolveField(() => String, { nullable: true })
+  transactionId(
+    @Root() checkout: Checkout,
+    @Context() context: any,
+  ): string | null {
+    // Only return transaction ID if authenticated
+    if (context.req?.user) {
+      return checkout.transactionId || null;
+    }
+    return null;
+  }
+
+  @ResolveField(() => String, { nullable: true })
+  notes(@Root() checkout: Checkout, @Context() context: any): string | null {
+    // Only return notes if authenticated
+    if (context.req?.user) {
+      return checkout.notes || null;
+    }
+    return null;
   }
 }
