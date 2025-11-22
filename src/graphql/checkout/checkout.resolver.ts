@@ -8,7 +8,7 @@ import {
   ResolveField,
   Root,
 } from '@nestjs/graphql';
-import { UseGuards } from '@nestjs/common';
+import { UseGuards, UnauthorizedException } from '@nestjs/common';
 import { Checkout, CheckoutStatus } from './checkout.type';
 import { CheckoutService } from '../../checkout/checkout.service';
 import { CreateCheckoutInput } from './create-checkout.input';
@@ -23,10 +23,13 @@ export class CheckoutResolver {
   constructor(private readonly checkoutService: CheckoutService) {}
 
   @Mutation(() => Checkout)
+  @UseGuards(OptionalJwtAuthGuard)
   createCheckout(
     @Args('createCheckoutInput') createCheckoutInput: CreateCheckoutInput,
+    @Context() context: any,
   ) {
-    return this.checkoutService.create(createCheckoutInput);
+    const userId = context.req?.user?.userId || undefined;
+    return this.checkoutService.create(createCheckoutInput, userId);
   }
 
   @Query(() => [Checkout], { name: 'checkouts' })
@@ -45,6 +48,16 @@ export class CheckoutResolver {
   @UseGuards(OptionalJwtAuthGuard)
   findOne(@Args('id', { type: () => ID }) id: string) {
     return this.checkoutService.findOne(id);
+  }
+
+  @Query(() => [Checkout], { name: 'myOrders' })
+  @UseGuards(JwtAuthGuard)
+  myOrders(@Context() context: any) {
+    const userId = context.req?.user?.userId;
+    if (!userId) {
+      throw new UnauthorizedException('User not authenticated');
+    }
+    return this.checkoutService.findByUserId(userId);
   }
 
   @Mutation(() => Checkout)

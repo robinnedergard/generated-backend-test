@@ -4,7 +4,10 @@ import {
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
+  ManyToOne,
+  JoinColumn,
 } from 'typeorm';
+import { User } from '../../users/entities/user.entity';
 
 export enum PaymentMethod {
   CREDIT_CARD = 'credit_card',
@@ -102,6 +105,13 @@ export class Checkout {
 
   @Column('text', { nullable: true })
   notes?: string;
+
+  @Column({ nullable: true })
+  userId?: string;
+
+  @ManyToOne(() => User, { nullable: true })
+  @JoinColumn({ name: 'userId' })
+  user?: User;
 
   @CreateDateColumn()
   createdAt: Date;

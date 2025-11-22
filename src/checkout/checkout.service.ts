@@ -17,10 +17,14 @@ export class CheckoutService {
     private checkoutRepository: Repository<Checkout>,
   ) {}
 
-  async create(createCheckoutDto: CreateCheckoutDto): Promise<Checkout> {
+  async create(
+    createCheckoutDto: CreateCheckoutDto,
+    userId?: string,
+  ): Promise<Checkout> {
     const checkout = this.checkoutRepository.create({
       ...createCheckoutDto,
       status: CheckoutStatus.PENDING,
+      userId,
     });
 
     const savedCheckout = await this.checkoutRepository.save(checkout);
@@ -45,6 +49,13 @@ export class CheckoutService {
   async findByStatus(status: CheckoutStatus): Promise<Checkout[]> {
     return this.checkoutRepository.find({
       where: { status },
+      order: { createdAt: 'DESC' },
+    });
+  }
+
+  async findByUserId(userId: string): Promise<Checkout[]> {
+    return this.checkoutRepository.find({
+      where: { userId },
       order: { createdAt: 'DESC' },
     });
   }
