@@ -2,6 +2,83 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type Address {
+  address: String!
+  city: String!
+  country: String!
+  firstName: String!
+  lastName: String!
+  state: String!
+  zipCode: String!
+}
+
+input AddressInput {
+  address: String!
+  city: String!
+  country: String!
+  firstName: String!
+  lastName: String!
+  state: String!
+  zipCode: String!
+}
+
+type Checkout {
+  billingAddress: Address
+  createdAt: DateTime!
+  email: String
+  id: ID!
+  items: [CheckoutItem!]!
+  notes: String
+  paymentDetails: PaymentDetails
+  paymentMethod: PaymentMethod!
+  phone: String
+  shipping: Float!
+  shippingAddress: Address!
+  status: CheckoutStatus!
+  subtotal: Float!
+  tax: Float!
+  total: Float!
+  transactionId: String
+  updatedAt: DateTime!
+}
+
+type CheckoutItem {
+  name: String!
+  price: Float!
+  productId: String!
+  quantity: Float!
+}
+
+input CheckoutItemInput {
+  name: String!
+  price: Float!
+  productId: String!
+  quantity: Float!
+}
+
+enum CheckoutStatus {
+  CANCELLED
+  COMPLETED
+  FAILED
+  PENDING
+  PROCESSING
+}
+
+input CreateCheckoutInput {
+  billingAddress: AddressInput
+  email: String
+  items: [CheckoutItemInput!]!
+  notes: String
+  paymentDetails: PaymentDetailsInput
+  paymentMethod: PaymentMethod!
+  phone: String
+  shipping: Float!
+  shippingAddress: AddressInput!
+  subtotal: Float!
+  tax: Float!
+  total: Float!
+}
+
 input CreateProductInput {
   badge: String
   category: String!
@@ -27,10 +104,35 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 scalar DateTime
 
 type Mutation {
+  cancelCheckout(id: ID!): Checkout!
+  createCheckout(createCheckoutInput: CreateCheckoutInput!): Checkout!
   createProduct(createProductInput: CreateProductInput!): Product!
   createUser(createUserInput: CreateUserInput!): User!
   removeProduct(id: ID!): Boolean!
   updateProduct(id: ID!, updateProductInput: CreateProductInput!): Product!
+}
+
+type PaymentDetails {
+  bankAccount: String
+  cardBrand: String
+  cardLast4: String
+  paypalEmail: String
+}
+
+input PaymentDetailsInput {
+  bankAccount: String
+  cardBrand: String
+  cardLast4: String
+  paypalEmail: String
+}
+
+enum PaymentMethod {
+  APPLE_PAY
+  BANK_TRANSFER
+  CREDIT_CARD
+  DEBIT_CARD
+  GOOGLE_PAY
+  PAYPAL
 }
 
 type Product {
@@ -49,6 +151,8 @@ type Product {
 }
 
 type Query {
+  checkout(id: ID!): Checkout!
+  checkouts(status: CheckoutStatus): [Checkout!]!
   featuredProducts: [Product!]!
   product(id: ID!): Product!
   products(category: String): [Product!]!
