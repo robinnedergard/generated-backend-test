@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.3.0 (2025-11-22)
+
+* feat: checkout (#5) ([b1283fa](https://github.com/robinnedergard/generated-backend-test/commit/b1283fa)), closes [#5](https://github.com/robinnedergard/generated-backend-test/issues/5)
+
 ## 1.2.0 (2025-11-21)
 
 * feat: added db, and migrations and made graphql work (#4) ([dc61845](https://github.com/robinnedergard/generated-backend-test/commit/dc61845)), closes [#4](https://github.com/robinnedergard/generated-backend-test/issues/4)
