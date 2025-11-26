@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.5.0 (2025-11-26)
+
+* feat: added product reviews (#8) ([96fbbc3](https://github.com/robinnedergard/generated-backend-test/commit/96fbbc3)), closes [#8](https://github.com/robinnedergard/generated-backend-test/issues/8)
+
 ## 1.4.0 (2025-11-22)
 
 * feat: login (#7) ([f1277ea](https://github.com/robinnedergard/generated-backend-test/commit/f1277ea)), closes [#7](https://github.com/robinnedergard/generated-backend-test/issues/7)
