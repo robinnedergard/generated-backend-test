@@ -10,13 +10,16 @@ import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { ProductsModule } from './products/products.module';
 import { CheckoutModule } from './checkout/checkout.module';
+import { ReviewsModule } from './reviews/reviews.module';
 import { UserGraphQLModule } from './graphql/user/user.module';
 import { ProductGraphQLModule } from './graphql/product/product.module';
 import { CheckoutGraphQLModule } from './graphql/checkout/checkout.module';
+import { ReviewGraphQLModule } from './graphql/review/review.module';
 import databaseConfig from './config/database.config';
 import { User } from './users/entities/user.entity';
 import { Product } from './products/entities/product.entity';
 import { Checkout } from './checkout/entities/checkout.entity';
+import { Review } from './reviews/entities/review.entity';
 
 @Module({
   imports: [
@@ -33,7 +36,7 @@ import { Checkout } from './checkout/entities/checkout.entity';
         username: configService.get<string>('database.username'),
         password: configService.get<string>('database.password'),
         database: configService.get<string>('database.database'),
-        entities: [User, Product, Checkout],
+        entities: [User, Product, Checkout, Review],
         synchronize: false, // Always use migrations, never synchronize
         logging: process.env.NODE_ENV === 'development',
       }),
@@ -54,9 +57,11 @@ import { Checkout } from './checkout/entities/checkout.entity';
     AuthModule,
     ProductsModule,
     CheckoutModule,
+    ReviewsModule,
     UserGraphQLModule,
     ProductGraphQLModule,
     CheckoutGraphQLModule,
+    ReviewGraphQLModule,
   ],
   controllers: [AppController],
   providers: [AppService],

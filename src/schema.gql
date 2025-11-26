@@ -91,6 +91,13 @@ input CreateProductInput {
   rating: Float!
 }
 
+input CreateReviewInput {
+  name: String
+  productId: ID!
+  rating: Int!
+  text: String!
+}
+
 input CreateUserInput {
   email: String!
   firstName: String!
@@ -107,7 +114,9 @@ type Mutation {
   cancelCheckout(id: ID!): Checkout!
   createCheckout(createCheckoutInput: CreateCheckoutInput!): Checkout!
   createProduct(createProductInput: CreateProductInput!): Product!
+  createReview(createReviewInput: CreateReviewInput!): Review!
   createUser(createUserInput: CreateUserInput!): User!
+  deleteReview(id: ID!): Boolean!
   removeProduct(id: ID!): Boolean!
   updateProduct(id: ID!, updateProductInput: CreateProductInput!): Product!
 }
@@ -155,10 +164,24 @@ type Query {
   checkouts(status: CheckoutStatus): [Checkout!]!
   featuredProducts: [Product!]!
   myOrders: [Checkout!]!
+  myReviews: [Review!]!
   product(id: ID!): Product!
   products(category: String): [Product!]!
+  reviews(productId: ID!): [Review!]!
   user(id: ID!): User!
   users: [User!]!
+}
+
+type Review {
+  createdAt: DateTime!
+  id: ID!
+  name: String
+  productId: ID!
+  rating: Int!
+  text: String!
+  updatedAt: DateTime!
+  user: User
+  userName: String!
 }
 
 type User {
