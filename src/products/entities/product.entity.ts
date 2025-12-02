@@ -32,9 +32,6 @@ export class Product {
   @Column({ default: false })
   featured?: boolean;
 
-  @Column('decimal', { precision: 3, scale: 2, default: 0 })
-  rating: number;
-
   @Column('json', { default: '[]' })
   colors: string[];
 
