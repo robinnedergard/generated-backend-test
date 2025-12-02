@@ -1,4 +1,5 @@
 import { ObjectType, Field, ID } from '@nestjs/graphql';
+import { UserPermission } from './permission.enum';
 
 @ObjectType()
 export class User {
@@ -13,6 +14,9 @@ export class User {
 
   @Field()
   lastName: string;
+
+  @Field(() => [UserPermission])
+  permissions: UserPermission[];
 
   @Field()
   createdAt: Date;

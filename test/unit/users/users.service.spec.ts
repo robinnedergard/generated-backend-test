@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import { ConflictException } from '@nestjs/common';
 import { UsersService } from '#src/users/users.service';
 import { User } from '#src/users/entities/user.entity';
+import { UserPermissionEntity } from '#src/users/entities/user-permission.entity';
 import { CreateUserDto } from '#src/users/dto/create-user.dto';
 import * as bcrypt from 'bcrypt';
 
@@ -21,6 +22,13 @@ describe('UsersService', () => {
     delete: jest.fn(),
   };
 
+  const mockUserPermissionRepository = {
+    findOne: jest.fn(),
+    delete: jest.fn(),
+    create: jest.fn(),
+    save: jest.fn(),
+  };
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -28,6 +36,10 @@ describe('UsersService', () => {
         {
           provide: getRepositoryToken(User),
           useValue: mockRepository,
+        },
+        {
+          provide: getRepositoryToken(UserPermissionEntity),
+          useValue: mockUserPermissionRepository,
         },
       ],
     }).compile();
@@ -113,12 +125,18 @@ describe('UsersService', () => {
         },
       ];
 
-      mockRepository.find.mockResolvedValue(users);
+      const usersWithPermissions = users.map((u) => ({
+        ...u,
+        permissions: [],
+      }));
+      mockRepository.find.mockResolvedValue(usersWithPermissions);
 
       const result = await service.findAll();
 
-      expect(mockRepository.find).toHaveBeenCalled();
-      expect(result).toEqual(users);
+      expect(mockRepository.find).toHaveBeenCalledWith({
+        relations: ['permissions'],
+      });
+      expect(result).toEqual(usersWithPermissions);
     });
   });
 
@@ -134,14 +152,16 @@ describe('UsersService', () => {
         updatedAt: new Date(),
       };
 
-      mockRepository.findOne.mockResolvedValue(user);
+      const userWithPermissions = { ...user, permissions: [] };
+      mockRepository.findOne.mockResolvedValue(userWithPermissions);
 
       const result = await service.findOne('1');
 
       expect(mockRepository.findOne).toHaveBeenCalledWith({
         where: { id: '1' },
+        relations: ['permissions'],
       });
-      expect(result).toEqual(user);
+      expect(result).toEqual(userWithPermissions);
     });
   });
 
@@ -157,14 +177,16 @@ describe('UsersService', () => {
         updatedAt: new Date(),
       };
 
-      mockRepository.findOne.mockResolvedValue(user);
+      const userWithPermissions = { ...user, permissions: [] };
+      mockRepository.findOne.mockResolvedValue(userWithPermissions);
 
       const result = await service.findByEmail('test@example.com');
 
       expect(mockRepository.findOne).toHaveBeenCalledWith({
         where: { email: 'test@example.com' },
+        relations: ['permissions'],
       });
-      expect(result).toEqual(user);
+      expect(result).toEqual(userWithPermissions);
     });
   });
 
@@ -184,18 +206,23 @@ describe('UsersService', () => {
         firstName: 'Jane',
       };
 
-      const updatedUser = {
+      const existingUserWithPermissions = {
         ...existingUser,
+        permissions: [],
+      };
+      const updatedUser = {
+        ...existingUserWithPermissions,
         ...updateDto,
       };
 
-      mockRepository.findOne.mockResolvedValue(existingUser);
+      mockRepository.findOne.mockResolvedValue(existingUserWithPermissions);
       mockRepository.save.mockResolvedValue(updatedUser);
 
       const result = await service.update('1', updateDto);
 
       expect(mockRepository.findOne).toHaveBeenCalledWith({
         where: { id: '1' },
+        relations: ['permissions'],
       });
       expect(mockRepository.save).toHaveBeenCalled();
       expect(result.firstName).toBe('Jane');
@@ -219,14 +246,22 @@ describe('UsersService', () => {
       const hashedPassword = 'newHashedPassword';
       (bcrypt.hash as jest.Mock).mockResolvedValue(hashedPassword);
 
-      mockRepository.findOne.mockResolvedValue(existingUser);
-      mockRepository.save.mockResolvedValue({
+      const existingUserWithPermissions = {
         ...existingUser,
+        permissions: [],
+      };
+      mockRepository.findOne.mockResolvedValue(existingUserWithPermissions);
+      mockRepository.save.mockResolvedValue({
+        ...existingUserWithPermissions,
         password: hashedPassword,
       });
 
       await service.update('1', updateDto);
 
+      expect(mockRepository.findOne).toHaveBeenCalledWith({
+        where: { id: '1' },
+        relations: ['permissions'],
+      });
       expect(bcrypt.hash).toHaveBeenCalledWith('newPassword123', 10);
     });
   });

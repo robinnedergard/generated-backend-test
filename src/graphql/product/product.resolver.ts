@@ -4,6 +4,9 @@ import { Product } from './product.type';
 import { ProductsService } from '../../products/products.service';
 import { CreateProductInput } from './create-product.input';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
+import { PermissionsGuard } from '../../auth/guards/permissions.guard';
+import { Permissions } from '../../auth/decorators/permissions.decorator';
+import { UserPermission } from '../user/permission.enum';
 
 @Resolver(() => Product)
 export class ProductResolver {
@@ -29,8 +32,21 @@ export class ProductResolver {
     return this.productsService.findOne(id);
   }
 
+  @Query(() => [Product], { name: 'adminProducts' })
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @Permissions(UserPermission.PRODUCTS_READ)
+  adminProducts(
+    @Args('category', { nullable: true, type: () => String }) category?: string,
+  ) {
+    if (category) {
+      return this.productsService.findByCategory(category);
+    }
+    return this.productsService.findAll();
+  }
+
   @Mutation(() => Product)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @Permissions(UserPermission.PRODUCTS_WRITE)
   createProduct(
     @Args('createProductInput') createProductInput: CreateProductInput,
   ) {
@@ -38,7 +54,8 @@ export class ProductResolver {
   }
 
   @Mutation(() => Product)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @Permissions(UserPermission.PRODUCTS_WRITE)
   updateProduct(
     @Args('id', { type: () => ID }) id: string,
     @Args('updateProductInput') updateProductInput: CreateProductInput,
@@ -47,7 +64,8 @@ export class ProductResolver {
   }
 
   @Mutation(() => Boolean)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @Permissions(UserPermission.PRODUCTS_WRITE)
   async removeProduct(
     @Args('id', { type: () => ID }) id: string,
   ): Promise<boolean> {

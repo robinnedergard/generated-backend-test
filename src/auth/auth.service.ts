@@ -27,21 +27,37 @@ export class AuthService {
       throw new UnauthorizedException('Invalid credentials');
     }
 
+    // Load user with permissions
+    const userWithPermissions = await this.usersService.findOneWithPermissions(
+      user.id,
+    );
+    const {
+      password: _password,
+      permissions,
+      ...userData
+    } = userWithPermissions;
+
     const payload = { email: user.email, sub: user.id };
     return {
       access_token: this.jwtService.sign(payload),
-      user,
+      user: {
+        ...userData,
+        permissions: permissions ? permissions.map((up) => up.permission) : [],
+      },
     };
   }
 
   async register(registerDto: RegisterDto) {
     const user = await this.usersService.create(registerDto);
-    const { password: _password, ...result } = user;
+    const { password: _password, permissions, ...result } = user;
 
     const payload = { email: user.email, sub: user.id };
     return {
       access_token: this.jwtService.sign(payload),
-      user: result,
+      user: {
+        ...result,
+        permissions: permissions ? permissions.map((up) => up.permission) : [],
+      },
     };
   }
 }

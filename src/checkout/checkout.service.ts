@@ -137,4 +137,14 @@ export class CheckoutService {
     checkout.status = CheckoutStatus.CANCELLED;
     return this.checkoutRepository.save(checkout);
   }
+
+  async update(id: string, updateData: Partial<Checkout>): Promise<Checkout> {
+    const checkout = await this.findOne(id);
+    if (!checkout) {
+      throw new Error('Checkout not found');
+    }
+
+    Object.assign(checkout, updateData);
+    return this.checkoutRepository.save(checkout);
+  }
 }
