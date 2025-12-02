@@ -7,7 +7,7 @@ import {
   ResolveField,
   Root,
 } from '@nestjs/graphql';
-import { UseGuards } from '@nestjs/common';
+import { UseGuards, NotFoundException } from '@nestjs/common';
 import { User } from './user.type';
 import { UsersService } from '../../users/users.service';
 import { CreateUserInput } from './create-user.input';
@@ -36,6 +36,9 @@ export class UserResolver {
   @Permissions(UserPermission.PERMISSIONS_READ)
   async findOne(@Args('id', { type: () => ID }) id: string): Promise<User> {
     const user = await this.usersService.findOne(id);
+    if (!user) {
+      throw new NotFoundException(`User with ID ${id} not found`);
+    }
     const { password: _password, permissions, ...result } = user;
     return {
       ...result,
@@ -65,6 +68,9 @@ export class UserResolver {
   ): Promise<User> {
     await this.usersService.assignPermission(userId, permission);
     const user = await this.usersService.findOne(userId);
+    if (!user) {
+      throw new NotFoundException(`User with ID ${userId} not found`);
+    }
     const { password: _password, permissions, ...result } = user;
     return {
       ...result,
@@ -82,6 +88,9 @@ export class UserResolver {
   ): Promise<User> {
     await this.usersService.removePermission(userId, permission);
     const user = await this.usersService.findOne(userId);
+    if (!user) {
+      throw new NotFoundException(`User with ID ${userId} not found`);
+    }
     const { password: _password, permissions, ...result } = user;
     return {
       ...result,
