@@ -27,6 +27,13 @@ export class ReviewResolver {
     return this.reviewsService.findByProductId(productId);
   }
 
+  @Query(() => [Review], { name: 'reviewsByProductIds' })
+  async findByProductIds(
+    @Args('productIds', { type: () => [ID] }) productIds: string[],
+  ): Promise<ReviewEntity[]> {
+    return this.reviewsService.findByProductIds(productIds);
+  }
+
   @Query(() => [Review], { name: 'myReviews' })
   @UseGuards(JwtAuthGuard)
   async myReviews(@Context() context: any): Promise<ReviewEntity[]> {

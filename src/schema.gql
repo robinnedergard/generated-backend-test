@@ -171,6 +171,7 @@ type Query {
   product(id: ID!): Product!
   products(category: String): [Product!]!
   reviews(productId: ID!): [Review!]!
+  reviewsByProductIds(productIds: [ID!]!): [Review!]!
   user(id: ID!): User!
   users: [User!]!
 }
