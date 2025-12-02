@@ -31,6 +31,9 @@ export class AuthService {
     const userWithPermissions = await this.usersService.findOneWithPermissions(
       user.id,
     );
+    if (!userWithPermissions) {
+      throw new UnauthorizedException('User not found');
+    }
     const {
       password: _password,
       permissions,
