@@ -5,7 +5,6 @@ import {
   IsBoolean,
   IsArray,
   Min,
-  Max,
   IsNotEmpty,
 } from 'class-validator';
 
@@ -37,11 +36,6 @@ export class CreateProductDto {
   @IsBoolean()
   @IsOptional()
   featured?: boolean;
-
-  @IsNumber()
-  @Min(0)
-  @Max(5)
-  rating: number;
 
   @IsArray()
   @IsString({ each: true })

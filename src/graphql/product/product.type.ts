@@ -26,9 +26,6 @@ export class Product {
   @Field({ nullable: true })
   featured?: boolean;
 
-  @Field(() => Float)
-  rating: number;
-
   @Field(() => [String])
   colors: string[];
 

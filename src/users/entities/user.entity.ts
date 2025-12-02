@@ -4,7 +4,9 @@ import {
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
+  OneToMany,
 } from 'typeorm';
+import { UserPermissionEntity } from './user-permission.entity';
 
 @Entity('users')
 export class User {
@@ -22,6 +24,12 @@ export class User {
 
   @Column()
   lastName: string;
+
+  @OneToMany(
+    () => UserPermissionEntity,
+    (userPermission) => userPermission.user,
+  )
+  permissions: UserPermissionEntity[];
 
   @CreateDateColumn()
   createdAt: Date;

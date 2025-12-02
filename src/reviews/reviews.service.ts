@@ -5,7 +5,7 @@ import {
   ForbiddenException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, In } from 'typeorm';
 import { Review } from './entities/review.entity';
 
 @Injectable()
@@ -61,6 +61,17 @@ export class ReviewsService {
   async findByProductId(productId: string): Promise<Review[]> {
     return this.reviewsRepository.find({
       where: { productId },
+      relations: ['user'],
+      order: { createdAt: 'DESC' },
+    });
+  }
+
+  async findByProductIds(productIds: string[]): Promise<Review[]> {
+    if (productIds.length === 0) {
+      return [];
+    }
+    return this.reviewsRepository.find({
+      where: { productId: In(productIds) },
       relations: ['user'],
       order: { createdAt: 'DESC' },
     });

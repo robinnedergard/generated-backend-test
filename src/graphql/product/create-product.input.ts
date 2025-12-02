@@ -6,7 +6,6 @@ import {
   IsBoolean,
   IsArray,
   Min,
-  Max,
   IsNotEmpty,
 } from 'class-validator';
 
@@ -46,12 +45,6 @@ export class CreateProductInput {
   @IsBoolean()
   @IsOptional()
   featured?: boolean;
-
-  @Field(() => Float)
-  @IsNumber()
-  @Min(0)
-  @Max(5)
-  rating: number;
 
   @Field(() => [String])
   @IsArray()

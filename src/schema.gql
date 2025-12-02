@@ -88,7 +88,6 @@ input CreateProductInput {
   image: String!
   name: String!
   price: Float!
-  rating: Float!
 }
 
 input CreateReviewInput {
@@ -111,13 +110,16 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 scalar DateTime
 
 type Mutation {
+  assignPermission(permission: UserPermission!, userId: ID!): User!
   cancelCheckout(id: ID!): Checkout!
   createCheckout(createCheckoutInput: CreateCheckoutInput!): Checkout!
   createProduct(createProductInput: CreateProductInput!): Product!
   createReview(createReviewInput: CreateReviewInput!): Review!
   createUser(createUserInput: CreateUserInput!): User!
   deleteReview(id: ID!): Boolean!
+  removePermission(permission: UserPermission!, userId: ID!): User!
   removeProduct(id: ID!): Boolean!
+  updateCheckoutStatus(id: ID!, status: CheckoutStatus!): Checkout!
   updateProduct(id: ID!, updateProductInput: CreateProductInput!): Product!
 }
 
@@ -155,11 +157,12 @@ type Product {
   image: String!
   name: String!
   price: Float!
-  rating: Float!
   updatedAt: DateTime!
 }
 
 type Query {
+  adminCheckouts(status: CheckoutStatus): [Checkout!]!
+  adminProducts(category: String): [Product!]!
   checkout(id: ID!): Checkout!
   checkouts(status: CheckoutStatus): [Checkout!]!
   featuredProducts: [Product!]!
@@ -168,6 +171,7 @@ type Query {
   product(id: ID!): Product!
   products(category: String): [Product!]!
   reviews(productId: ID!): [Review!]!
+  reviewsByProductIds(productIds: [ID!]!): [Review!]!
   user(id: ID!): User!
   users: [User!]!
 }
@@ -190,5 +194,17 @@ type User {
   firstName: String!
   id: ID!
   lastName: String!
+  permissions: [UserPermission!]!
   updatedAt: DateTime!
+}
+
+"""User permission types"""
+enum UserPermission {
+  ADMIN_READ
+  ORDERS_READ
+  ORDERS_WRITE
+  PERMISSIONS_READ
+  PERMISSIONS_WRITE
+  PRODUCTS_READ
+  PRODUCTS_WRITE
 }

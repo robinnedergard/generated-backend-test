@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import {
@@ -33,7 +33,15 @@ export class CheckoutService {
     this.logger.log(`Processing payment for checkout ${savedCheckout.id}`);
     await this.processPayment(savedCheckout);
 
-    return this.checkoutRepository.findOne({ where: { id: savedCheckout.id } });
+    const updatedCheckout = await this.checkoutRepository.findOne({
+      where: { id: savedCheckout.id },
+    });
+    if (!updatedCheckout) {
+      throw new NotFoundException(
+        'Checkout not found after payment processing',
+      );
+    }
+    return updatedCheckout;
   }
 
   async findAll(): Promise<Checkout[]> {
@@ -127,7 +135,7 @@ export class CheckoutService {
   async cancel(id: string): Promise<Checkout> {
     const checkout = await this.findOne(id);
     if (!checkout) {
-      throw new Error('Checkout not found');
+      throw new NotFoundException('Checkout not found');
     }
 
     if (checkout.status === CheckoutStatus.COMPLETED) {
@@ -135,6 +143,16 @@ export class CheckoutService {
     }
 
     checkout.status = CheckoutStatus.CANCELLED;
+    return this.checkoutRepository.save(checkout);
+  }
+
+  async update(id: string, updateData: Partial<Checkout>): Promise<Checkout> {
+    const checkout = await this.findOne(id);
+    if (!checkout) {
+      throw new NotFoundException('Checkout not found');
+    }
+
+    Object.assign(checkout, updateData);
     return this.checkoutRepository.save(checkout);
   }
 }

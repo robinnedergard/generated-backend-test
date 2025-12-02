@@ -17,6 +17,7 @@ describe('AuthService', () => {
   const mockUsersService = {
     findByEmail: jest.fn(),
     create: jest.fn(),
+    findOneWithPermissions: jest.fn(),
   };
 
   const mockJwtService = {
@@ -68,13 +69,21 @@ describe('AuthService', () => {
         password: 'password123',
       };
 
+      const userWithPermissions = {
+        ...user,
+        permissions: [],
+      };
       mockUsersService.findByEmail.mockResolvedValue(user);
+      mockUsersService.findOneWithPermissions.mockResolvedValue(
+        userWithPermissions,
+      );
       (bcrypt.compare as jest.Mock).mockResolvedValue(true);
       mockJwtService.sign.mockReturnValue('jwt-token');
 
       const result = await service.login(loginDto);
 
       expect(usersService.findByEmail).toHaveBeenCalledWith('test@example.com');
+      expect(usersService.findOneWithPermissions).toHaveBeenCalledWith('1');
       expect(bcrypt.compare).toHaveBeenCalledWith(
         'password123',
         'hashedPassword',
@@ -82,6 +91,7 @@ describe('AuthService', () => {
       expect(result.user).not.toHaveProperty('password');
       expect(result.user).toHaveProperty('id', '1');
       expect(result.user).toHaveProperty('email', 'test@example.com');
+      expect(result.user).toHaveProperty('permissions', []);
     });
 
     it('should return null if user does not exist (via login)', async () => {
@@ -140,14 +150,22 @@ describe('AuthService', () => {
       };
 
       const token = 'jwt-token';
+      const userWithPermissions = {
+        ...user,
+        permissions: [],
+      };
 
       mockUsersService.findByEmail.mockResolvedValue(user);
+      mockUsersService.findOneWithPermissions.mockResolvedValue(
+        userWithPermissions,
+      );
       (bcrypt.compare as jest.Mock).mockResolvedValue(true);
       mockJwtService.sign.mockReturnValue(token);
 
       const result = await service.login(loginDto);
 
       expect(usersService.findByEmail).toHaveBeenCalledWith(loginDto.email);
+      expect(usersService.findOneWithPermissions).toHaveBeenCalledWith(user.id);
       expect(jwtService.sign).toHaveBeenCalledWith({
         email: user.email,
         sub: user.id,
@@ -155,6 +173,7 @@ describe('AuthService', () => {
       expect(result).toHaveProperty('access_token', token);
       expect(result).toHaveProperty('user');
       expect(result.user).not.toHaveProperty('password');
+      expect(result.user).toHaveProperty('permissions', []);
     });
 
     it('should throw UnauthorizedException on invalid credentials', async () => {
@@ -179,6 +198,7 @@ describe('AuthService', () => {
         id: '1',
         ...registerDto,
         password: 'hashedPassword',
+        permissions: [],
         createdAt: new Date(),
         updatedAt: new Date(),
       };
@@ -198,6 +218,7 @@ describe('AuthService', () => {
       expect(result).toHaveProperty('access_token', token);
       expect(result).toHaveProperty('user');
       expect(result.user).not.toHaveProperty('password');
+      expect(result.user).toHaveProperty('permissions', []);
     });
   });
 });

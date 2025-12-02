@@ -17,6 +17,7 @@ import { CheckoutGraphQLModule } from './graphql/checkout/checkout.module';
 import { ReviewGraphQLModule } from './graphql/review/review.module';
 import databaseConfig from './config/database.config';
 import { User } from './users/entities/user.entity';
+import { UserPermissionEntity } from './users/entities/user-permission.entity';
 import { Product } from './products/entities/product.entity';
 import { Checkout } from './checkout/entities/checkout.entity';
 import { Review } from './reviews/entities/review.entity';
@@ -36,7 +37,7 @@ import { Review } from './reviews/entities/review.entity';
         username: configService.get<string>('database.username'),
         password: configService.get<string>('database.password'),
         database: configService.get<string>('database.database'),
-        entities: [User, Product, Checkout, Review],
+        entities: [User, UserPermissionEntity, Product, Checkout, Review],
         synchronize: false, // Always use migrations, never synchronize
         logging: process.env.NODE_ENV === 'development',
       }),

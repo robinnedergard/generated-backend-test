@@ -15,6 +15,9 @@ import { CreateCheckoutInput } from './create-checkout.input';
 import { CheckoutStatus as EntityCheckoutStatus } from '../../checkout/entities/checkout.entity';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import { OptionalJwtAuthGuard } from '../../auth/guards/optional-jwt-auth.guard';
+import { PermissionsGuard } from '../../auth/guards/permissions.guard';
+import { Permissions } from '../../auth/decorators/permissions.decorator';
+import { UserPermission } from '../user/permission.enum';
 import { Address } from './checkout.type';
 import { PaymentDetails } from './checkout.type';
 
@@ -44,6 +47,19 @@ export class CheckoutResolver {
     return this.checkoutService.findAll();
   }
 
+  @Query(() => [Checkout], { name: 'adminCheckouts' })
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @Permissions(UserPermission.ORDERS_READ)
+  adminCheckouts(
+    @Args('status', { nullable: true, type: () => CheckoutStatus })
+    status?: CheckoutStatus,
+  ) {
+    if (status) {
+      return this.checkoutService.findByStatus(status as EntityCheckoutStatus);
+    }
+    return this.checkoutService.findAll();
+  }
+
   @Query(() => Checkout, { name: 'checkout' })
   @UseGuards(OptionalJwtAuthGuard)
   findOne(@Args('id', { type: () => ID }) id: string) {
@@ -64,6 +80,18 @@ export class CheckoutResolver {
   @UseGuards(JwtAuthGuard)
   cancelCheckout(@Args('id', { type: () => ID }) id: string) {
     return this.checkoutService.cancel(id);
+  }
+
+  @Mutation(() => Checkout)
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @Permissions(UserPermission.ORDERS_WRITE)
+  async updateCheckoutStatus(
+    @Args('id', { type: () => ID }) id: string,
+    @Args('status', { type: () => CheckoutStatus }) status: CheckoutStatus,
+  ): Promise<Checkout> {
+    return this.checkoutService.update(id, {
+      status: status as EntityCheckoutStatus,
+    });
   }
 
   // Field resolvers to conditionally return sensitive data based on authentication
