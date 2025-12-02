@@ -22,9 +22,18 @@ export class PermissionsGuard implements CanActivate {
       return true;
     }
 
-    const ctx = GqlExecutionContext.create(context);
-    const request = ctx.getContext().req;
-    const user = request.user;
+    // Handle both HTTP and GraphQL contexts
+    const contextType = context.getType<'http' | 'graphql'>();
+    let request: any;
+
+    if (contextType === 'http') {
+      request = context.switchToHttp().getRequest();
+    } else {
+      const ctx = GqlExecutionContext.create(context);
+      request = ctx.getContext().req;
+    }
+
+    const user = request?.user;
 
     if (!user) {
       throw new ForbiddenException('User not authenticated');
