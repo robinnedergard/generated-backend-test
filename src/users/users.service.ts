@@ -111,6 +111,11 @@ export class UsersService {
     userId: string,
     permission: UserPermission,
   ): Promise<void> {
+    const user = await this.findOne(userId);
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
     await this.userPermissionRepository.delete({ userId, permission });
   }
 
