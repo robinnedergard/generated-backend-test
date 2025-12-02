@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.6.0 (2025-12-02)
+
+* feat: admin page (#9) ([19bf0d5](https://github.com/robinnedergard/generated-backend-test/commit/19bf0d5)), closes [#9](https://github.com/robinnedergard/generated-backend-test/issues/9)
+
 ## 1.5.0 (2025-11-26)
 
 * feat: added product reviews (#8) ([96fbbc3](https://github.com/robinnedergard/generated-backend-test/commit/96fbbc3)), closes [#8](https://github.com/robinnedergard/generated-backend-test/issues/8)
